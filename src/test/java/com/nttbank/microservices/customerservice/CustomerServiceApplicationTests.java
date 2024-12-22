@@ -1,4 +1,4 @@
-package com.nttbank.microservices.customer_service;
+package com.nttbank.microservices.customerservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
