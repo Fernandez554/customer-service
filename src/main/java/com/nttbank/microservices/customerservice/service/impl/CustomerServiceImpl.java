@@ -12,36 +12,33 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements ICustomerService {
 
-    private final ICustomerRepo repo;
+  private final ICustomerRepo repo;
 
-    public CustomerServiceImpl(ICustomerRepo repo) {
-        this.repo = repo;
-    }
+  @Override
+  public Mono<Customer> save(Customer t) {
+    return repo.save(t);
+  }
 
-    @Override
-    public Mono<Customer> save(Customer t) {
-       return repo.save(t);
-    }
+  @Override
+  public Mono<Customer> update(Customer t) {
+    return repo.save(t);
+  }
 
-    @Override
-    public Mono<Customer> update(Customer t) {
-        return repo.save(t);
-    }
+  @Override
+  public Flux<Customer> findAll() {
+    return repo.findAll();
+  }
 
-    @Override
-    public Flux<Customer> findAll() {
-        return repo.findAll();
-    }
+  @Override
+  public Mono<Customer> findById(String customerId) {
+    return repo.findById(customerId);
+  }
 
-    @Override
-    public Mono<Customer> findById(String customerId) {
-        return repo.findById(customerId);
-    }
-
-    @Override
-    public Mono<Void> delete(String customerId) {
-        return repo.deleteById(customerId);
-    }
+  @Override
+  public Mono<Void> delete(String customerId) {
+    return repo.deleteById(customerId);
+  }
 }

@@ -10,12 +10,12 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 @Configuration
 public class MongoConfig implements InitializingBean {
 
-    @Autowired
-    @Lazy
-    private MappingMongoConverter converter;
+  @Autowired
+  @Lazy
+  private MappingMongoConverter converter;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-    }
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    converter.setTypeMapper(new DefaultMongoTypeMapper(null));
+  }
 }

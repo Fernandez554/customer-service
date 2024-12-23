@@ -14,17 +14,19 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RequestValidator {
 
-    private final Validator validator;
+  private final Validator validator;
 
-    public <T> Mono<T> validate(T t) {
-        if(t == null)
-            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  public <T> Mono<T> validate(T t) {
+      if (t == null) {
+          return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+      }
 
-        Set<ConstraintViolation<T>> constraints = validator.validate(t);
+    Set<ConstraintViolation<T>> constraints = validator.validate(t);
 
-        if(constraints == null || constraints.isEmpty())
-            return Mono.just(t);
+      if (constraints == null || constraints.isEmpty()) {
+          return Mono.just(t);
+      }
 
-        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
-    }
+    return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  }
 }

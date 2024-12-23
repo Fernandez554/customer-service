@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ResourceWebPropertiesConfig {
 
-    @Bean
-    public WebProperties.Resources resources(){
-        return new WebProperties.Resources();
-    }
+  @Bean
+  public WebProperties.Resources resources() {
+    return new WebProperties.Resources();
+  }
 }

@@ -10,9 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -22,27 +19,25 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Customer {
 
-    @EqualsAndHashCode.Include
-    @Id
-    private String id;
+  @EqualsAndHashCode.Include
+  @Id
+  private String id;
 
-    @Pattern(regexp = "^(personal|business)$", message = "Customer type must be 'personal' or 'business'")
-    @NotNull(message = "Customer type cannot be null")
-    private String type;
+  @Pattern(regexp = "^(personal|business)$",
+      message = "Customer type must be 'personal' or 'business'")
+  @NotNull(message = "Customer type cannot be null")
+  private String type;
 
-    @Size(min = 3, max = 90, message = "Customer type must be between 3 and 90 characters")
-    @NotNull(message = "Customer name cannot be null")
-    private String name;
+  @Size(min = 3, max = 90, message = "Customer type must be between 3 and 90 characters")
+  @NotNull(message = "Customer name cannot be null")
+  private String name;
 
-    private String phone;
+  private String phone;
 
-    private String email;
+  private String email;
 
-    private String address;
+  private String address;
 
-    @Pattern(
-            regexp = "^\\d{4}-\\d{2}-\\d{2}$",
-            message = "Date of birth must be in the format YYYY-MM-DD."
-    )
-    private String dateOfBirth;
+  @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date of birth must be in the format YYYY-MM-DD.")
+  private String dateOfBirth;
 }
