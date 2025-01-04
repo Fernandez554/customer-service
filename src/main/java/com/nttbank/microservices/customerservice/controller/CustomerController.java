@@ -1,7 +1,7 @@
 package com.nttbank.microservices.customerservice.controller;
 
 import com.nttbank.microservices.customerservice.model.Customer;
-import com.nttbank.microservices.customerservice.service.ICustomerService;
+import com.nttbank.microservices.customerservice.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -32,7 +32,7 @@ import reactor.core.publisher.Mono;
 @Tag(name = "Customer Controller", description = "Manage customers")
 public class CustomerController {
 
-  private final ICustomerService service;
+  private final CustomerService service;
 
   /**
    * Fetches a list of all customers.

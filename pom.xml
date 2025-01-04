@@ -112,34 +112,35 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<!-- JaCoCo Maven Plugin -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.7</version>
+				<version>0.8.7</version> <!-- Make sure to use the latest version -->
 				<executions>
-					<!-- The 'prepare-agent' goal is responsible for adding the agent to the JVM -->
 					<execution>
 						<id>prepare-agent</id>
-						<phase>test</phase> <!-- This will run during the 'test' phase -->
 						<goals>
-							<goal>prepare-agent</goal>
+							<goal>prepare-agent</goal> <!-- This prepares JaCoCo for collecting coverage data -->
 						</goals>
 					</execution>
-
-					<!-- The 'report' goal generates the coverage report after tests have run -->
 					<execution>
 						<id>report</id>
-						<phase>post-integration-test</phase> <!-- Run after integration tests -->
 						<goals>
-							<goal>report</goal>
+							<goal>report</goal> <!-- This generates the coverage report -->
 						</goals>
 						<configuration>
 							<formats>
-								<format>XML</format> <!-- You can also include HTML or CSV if needed -->
+								<format>XML</format> <!-- SonarCloud expects XML -->
 							</formats>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.1.2184</version> <!-- Use the latest SonarCloud plugin version -->
 			</plugin>
 		</plugins>
 	</build>

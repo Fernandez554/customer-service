@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 /**
  * ICustomerService interface for interacting with the MongoDB database.
  */
-public interface ICustomerService {
+public interface CustomerService {
 
   Mono<Customer> save(Customer t);
 
