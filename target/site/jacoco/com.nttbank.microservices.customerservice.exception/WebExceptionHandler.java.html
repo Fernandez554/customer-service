@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">customer-service</a> &gt; <a href="index.source.html" class="el_package">com.nttbank.microservices.customerservice.exception</a> &gt; <span class="el_source">WebExceptionHandler.java</span></div><h1>WebExceptionHandler.java</h1><pre class="source lang-java linenums">package com.nttbank.microservices.customerservice.exception;
+
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.reactive.function.server.RequestPredicates;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+@Component
+@Order(-1)
+public class WebExceptionHandler extends AbstractErrorWebExceptionHandler {
+
+  public WebExceptionHandler(ErrorAttributes errorAttributes, WebProperties.Resources resources,
+      ApplicationContext applicationContext, ServerCodecConfigurer configure) {
+<span class="nc" id="L35">    super(errorAttributes, resources, applicationContext);</span>
+<span class="nc" id="L36">    this.setMessageWriters(configure.getWriters());</span>
+<span class="nc" id="L37">  }</span>
+
+  @Override
+  protected RouterFunction&lt;ServerResponse&gt; getRoutingFunction(ErrorAttributes errorAttributes) {
+<span class="nc" id="L41">    return RouterFunctions.route(RequestPredicates.all(),</span>
+        this::renderErrorResponse); //req -&gt; this.renderErrorResponse(req)
+  }
+
+  private Mono&lt;ServerResponse&gt; renderErrorResponse(ServerRequest request) {
+<span class="nc" id="L46">    Throwable error = getError(request);</span>
+
+<span class="nc bnc" id="L48" title="All 2 branches missed.">    if (error instanceof WebExchangeBindException bindException) {</span>
+<span class="nc" id="L49">      return handleValidationErrors(bindException);</span>
+    }
+
+<span class="nc" id="L52">    Map&lt;String, Object&gt; errorAttributes = getErrorAttributes(request,</span>
+<span class="nc" id="L53">        ErrorAttributeOptions.defaults());</span>
+<span class="nc" id="L54">    int statusCode = (int) errorAttributes.getOrDefault(&quot;status&quot;, 500);</span>
+
+<span class="nc" id="L56">    return ServerResponse.status(statusCode).contentType(MediaType.APPLICATION_JSON)</span>
+<span class="nc" id="L57">        .bodyValue(errorAttributes);</span>
+
+  }
+
+  private Mono&lt;ServerResponse&gt; handleValidationErrors(WebExchangeBindException bindException) {
+<span class="nc" id="L62">    List&lt;String&gt; errors = bindException.getFieldErrors().stream()</span>
+<span class="nc" id="L63">        .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();</span>
+
+<span class="nc" id="L65">    Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L66">    response.put(&quot;status&quot;, 400);</span>
+<span class="nc" id="L67">    response.put(&quot;error&quot;, &quot;Validation Error&quot;);</span>
+<span class="nc" id="L68">    response.put(&quot;message&quot;, &quot;Invalid input data&quot;);</span>
+<span class="nc" id="L69">    response.put(&quot;errors&quot;, errors);</span>
+
+<span class="nc" id="L71">    return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(response);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+customer-service,com.nttbank.microservices.customerservice.validator,RequestValidator,29,0,6,0,6,0,4,0,1,0
+customer-service,com.nttbank.microservices.customerservice.controller,CustomerController,128,14,0,0,25,3,9,1,9,1
+customer-service,com.nttbank.microservices.customerservice,CustomerServiceApplication,8,0,0,0,3,0,2,0,2,0
+customer-service,com.nttbank.microservices.customerservice.exception,WebExceptionHandler,87,0,2,0,20,0,5,0,4,0
+customer-service,com.nttbank.microservices.customerservice.config,OpenApiConfig,43,0,0,0,16,0,2,0,2,0
+customer-service,com.nttbank.microservices.customerservice.config,MongoConfig,8,0,0,0,2,0,1,0,1,0
+customer-service,com.nttbank.microservices.customerservice.config,ResourceWebPropertiesConfig,7,0,0,0,2,0,2,0,2,0
+customer-service,com.nttbank.microservices.customerservice.service.impl,CustomerServiceImpl,24,0,0,0,5,0,5,0,5,0
