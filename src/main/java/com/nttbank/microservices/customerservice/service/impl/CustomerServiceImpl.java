@@ -3,7 +3,7 @@ package com.nttbank.microservices.customerservice.service.impl;
 
 import com.nttbank.microservices.customerservice.model.Customer;
 import com.nttbank.microservices.customerservice.repo.ICustomerRepo;
-import com.nttbank.microservices.customerservice.service.ICustomerService;
+import com.nttbank.microservices.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
  */
 @Service
 @RequiredArgsConstructor
-public class CustomerServiceImpl implements ICustomerService {
+public class CustomerServiceImpl implements CustomerService {
 
   private final ICustomerRepo repo;
 
