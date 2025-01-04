@@ -1,5 +1,7 @@
 package com.nttbank.microservices.customerservice.controller;
 
+import com.nttbank.microservices.customerservice.dto.CustomerDTO;
+import com.nttbank.microservices.customerservice.mapper.CustomerMapper;
 import com.nttbank.microservices.customerservice.model.Customer;
 import com.nttbank.microservices.customerservice.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +23,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RestController
 @RequestMapping("/customers")
 @RequiredArgsConstructor
@@ -33,12 +38,13 @@ import reactor.core.publisher.Mono;
 public class CustomerController {
 
   private final CustomerService service;
+  private final CustomerMapper mapper;
 
   /**
    * Fetches a list of all customers.
    *
    * @return a {@link Mono} containing a {@link ResponseEntity} with the list of customers or a
-   *     {@link ResponseEntity} with no content if no customers are found
+   * {@link ResponseEntity} with no content if no customers are found
    */
   @Operation(
       summary = "Fetch all customers",
@@ -51,7 +57,9 @@ public class CustomerController {
       @ApiResponse(responseCode = "204", description = "No content available")
   })
   @GetMapping
-  public Mono<ResponseEntity<Flux<Customer>>> findAll() {
+  public Mono<ResponseEntity<Flux<Customer>>> findAll(
+      @RequestHeader("X-Username") String username) {
+    log.info("Desde customer-service : " + username);
     Flux<Customer> customerList = service.findAll();
 
     return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(customerList))
@@ -63,7 +71,7 @@ public class CustomerController {
    *
    * @param id the ID of the customer to retrieve
    * @return a {@link Mono} containing a {@link ResponseEntity} with the customer details or a
-   *     {@link ResponseEntity} with status 404 if the customer is not found.
+   * {@link ResponseEntity} with status 404 if the customer is not found.
    */
   @Operation(
       summary = "Fetch customer by ID",
@@ -83,10 +91,10 @@ public class CustomerController {
   /**
    * Creates a new customer.
    *
-   * @param customer the customer to create
-   * @param req      the {@link ServerHttpRequest} to get the URI for the created resource
+   * @param customerDTO the customer to create
+   * @param req         the {@link ServerHttpRequest} to get the URI for the created resource
    * @return a {@link Mono} containing a {@link ResponseEntity} with the created customer and the
-   *     URI of the newly created resource, or 404 if creation fails.
+   * URI of the newly created resource, or 404 if creation fails.
    */
   @Operation(
       summary = "Create a new customer",
@@ -98,9 +106,11 @@ public class CustomerController {
       @ApiResponse(responseCode = "404", description = "Creation failed")
   })
   @PostMapping
-  public Mono<ResponseEntity<Customer>> save(@Valid @RequestBody Customer customer,
+  public Mono<ResponseEntity<Customer>> save(@Valid @RequestBody CustomerDTO customerDTO,
       final ServerHttpRequest req) {
-    return service.save(customer).map(c -> ResponseEntity.created(
+
+    return service.save(mapper.customerDtoToCustomer(customerDTO))
+        .map(c -> ResponseEntity.created(
                 URI.create(req.getURI().toString().concat("/").concat(c.getId())))
             .contentType(MediaType.APPLICATION_JSON).body(c))
         .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -109,10 +119,10 @@ public class CustomerController {
   /**
    * Updates an existing customer by ID.
    *
-   * @param id       the ID of the customer to update
-   * @param customer the updated customer information
+   * @param id          the ID of the customer to update
+   * @param customerDTO the updated customer information
    * @return a {@link Mono} containing a {@link ResponseEntity} with the updated customer or a
-   *     {@link ResponseEntity} with status 404 if the customer is not found.
+   * {@link ResponseEntity} with status 404 if the customer is not found.
    */
   @Operation(
       summary = "Update an existing customer",
@@ -125,24 +135,24 @@ public class CustomerController {
   })
   @PutMapping("/{customer_id}")
   public Mono<ResponseEntity<Customer>> update(@Valid @PathVariable("customer_id") String id,
-      @Valid @RequestBody Customer customer) {
-    customer.setId(id);
+      @Valid @RequestBody CustomerDTO customerDTO) {
+    customerDTO.setId(id);
 
-    Mono<Customer> monoBody = Mono.just(customer);
+    Mono<Customer> monoBody = Mono.just(mapper.customerDtoToCustomer(customerDTO));
     Mono<Customer> monoDb = service.findById(id);
 
     return monoDb.zipWith(monoBody, (db, c) -> {
-      db.setId(id);
-      db.setName(c.getName());
-      db.setType(c.getType());
-      db.setPhone(c.getPhone());
-      db.setEmail(c.getEmail());
-      db.setAddress(c.getAddress());
-      db.setDateOfBirth(c.getDateOfBirth());
-      return db;
-    }).flatMap(service::update)
-      .map(e -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(e))
-      .defaultIfEmpty(ResponseEntity.notFound().build());
+          db.setId(id);
+          db.setName(c.getName());
+          db.setType(c.getType());
+          db.setPhone(c.getPhone());
+          db.setEmail(c.getEmail());
+          db.setAddress(c.getAddress());
+          db.setDateOfBirth(c.getDateOfBirth());
+          return db;
+        }).flatMap(service::update)
+        .map(e -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(e))
+        .defaultIfEmpty(ResponseEntity.notFound().build());
   }
 
   /**
@@ -150,7 +160,7 @@ public class CustomerController {
    *
    * @param id the ID of the customer to delete
    * @return a {@link Mono} containing a {@link ResponseEntity} with status 204 if deleted, or a
-   *     {@link ResponseEntity} with status 404 if the customer is not found.
+   * {@link ResponseEntity} with status 404 if the customer is not found.
    */
   @Operation(
       summary = "Delete a customer by ID",
