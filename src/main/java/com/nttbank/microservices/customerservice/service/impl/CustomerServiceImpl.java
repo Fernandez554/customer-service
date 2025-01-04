@@ -4,13 +4,14 @@ package com.nttbank.microservices.customerservice.service.impl;
 import com.nttbank.microservices.customerservice.model.Customer;
 import com.nttbank.microservices.customerservice.repo.ICustomerRepo;
 import com.nttbank.microservices.customerservice.service.ICustomerService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * CustomerServiceImpl class that implements the ICustomerService interface.
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements ICustomerService {

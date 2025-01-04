@@ -45,12 +45,6 @@ public class WebExceptionHandler extends AbstractErrorWebExceptionHandler {
   private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
     Throwable error = getError(request);
 
-    if (error instanceof ConstraintViolationException violationException) {
-      List<String> errors = violationException.getConstraintViolations().stream()
-          .map(ConstraintViolation::getMessage).collect(Collectors.toList());
-
-      return ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(errors);
-    }
     if (error instanceof WebExchangeBindException bindException) {
       return handleValidationErrors(bindException);
     }
@@ -66,7 +60,7 @@ public class WebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
   private Mono<ServerResponse> handleValidationErrors(WebExchangeBindException bindException) {
     List<String> errors = bindException.getFieldErrors().stream()
-        .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+        .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
 
     Map<String, Object> response = new HashMap<>();
     response.put("status", 400);

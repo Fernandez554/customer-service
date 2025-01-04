@@ -4,6 +4,9 @@ import com.nttbank.microservices.customerservice.model.Customer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * ICustomerService interface for interacting with the MongoDB database.
+ */
 public interface ICustomerService {
 
   Mono<Customer> save(Customer t);

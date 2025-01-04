@@ -10,22 +10,32 @@ import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
+/**
+ * RequestValidator class that validates the request.
+ */
 @Component
 @RequiredArgsConstructor
 public class RequestValidator {
 
   private final Validator validator;
 
+  /**
+   * Validates the request.
+   *
+   * @param t the request to validate
+   * @param <T> the type of the request
+   * @return the validated request
+   */
   public <T> Mono<T> validate(T t) {
-      if (t == null) {
-          return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
-      }
+    if (t == null) {
+      return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    }
 
     Set<ConstraintViolation<T>> constraints = validator.validate(t);
 
-      if (constraints == null || constraints.isEmpty()) {
-          return Mono.just(t);
-      }
+    if (constraints == null || constraints.isEmpty()) {
+      return Mono.just(t);
+    }
 
     return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
