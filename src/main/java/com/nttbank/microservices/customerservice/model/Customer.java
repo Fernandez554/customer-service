@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "customers")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
 public class Customer {
 
   @EqualsAndHashCode.Include
@@ -28,6 +30,10 @@ public class Customer {
   @NotNull(message = "Customer type cannot be null")
   private String type;
 
+  @Pattern(regexp = "^(vip|pyme|)$", message = "Customer profile must be 'vip' or 'pyme'")
+  @Builder.Default
+  private String profile = "";
+
   @Size(min = 3, max = 90, message = "Customer type must be between 3 and 90 characters")
   @NotNull(message = "Customer name cannot be null")
   private String name;
@@ -38,6 +44,7 @@ public class Customer {
 
   private String address;
 
-  @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date of birth must be in the format YYYY-MM-DD.")
+  @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$",
+      message = "Date of birth must be in the format YYYY-MM-DD.")
   private String dateOfBirth;
 }
